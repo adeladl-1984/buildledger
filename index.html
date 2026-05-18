@@ -606,7 +606,7 @@ function handleFile(input) {
 function scanAI(b64, mime) {
   el('e-scan').textContent='Calling API...';
   el('e-scan').className='scan-bar on';
-  var key='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';
+  var key='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';
   var prompt='Extract invoice/receipt data. Return ONLY valid JSON no markdown no extra text: {"type":"expense","date":"YYYY-MM-DD","supplier":"","invoiceNumber":"","description":"","category":"","exGST":0,"gst":0,"total":0}. Rules: if payment received set type to income else expense. If GST not shown separately: gst=total/11. category must be exactly one of: '+AC.join(',');
   var controller=new AbortController();
   var timer=setTimeout(function(){controller.abort();},30000);
