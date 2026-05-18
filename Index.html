@@ -502,10 +502,7 @@ function openEntry(scope) {
   el('e-imgwrap').style.display='none';
   el('e-scan').className='scan-bar';
   el('e-ok').style.display='none'; el('e-er').style.display='none';
-  try { el('e-file').value=''; } catch(ignore) {}
-  var oldF=el('e-file'), newF=oldF.cloneNode(true);
-  newF.id='e-file'; newF.onchange=function(){handleFile(this);};
-  oldF.parentNode.replaceChild(newF,oldF);
+  el('e-file').value='';
   el('e-scope-card').style.display=S.active?'':'none';
   setScope(scope); setType('expense');
   el('e-back').onclick=function(){go(scope==='overhead'?'overheads':'project');};
