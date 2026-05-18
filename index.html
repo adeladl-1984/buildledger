@@ -604,8 +604,11 @@ function handleFile(input) {
 function scanAI(b64, mime) {
   var key='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';
   var prompt='Extract invoice/receipt data. Return ONLY valid JSON no markdown no extra text: {"type":"expense","date":"YYYY-MM-DD","supplier":"","invoiceNumber":"","description":"","category":"","exGST":0,"gst":0,"total":0}. Rules: if payment received set type to income else expense. If GST not shown separately: gst=total/11. category must be exactly one of: '+AC.join(',');
+  var controller=new AbortController();
+  var timer=setTimeout(function(){controller.abort();},30000);
   fetch('https://api.anthropic.com/v1/messages',{
     method:'POST',
+    signal:controller.signal,
     headers:{
       'Content-Type':'application/json',
       'x-api-key':key,
@@ -620,7 +623,10 @@ function scanAI(b64, mime) {
         {type:'text',text:prompt}
       ]}]
     })
-  }).then(function(r){return r.json();}).then(function(data){
+  }).then(function(r){
+    clearTimeout(timer);
+    return r.json();
+  }).then(function(data){
     if(!data.content){
       el('e-er').textContent='API Error: '+JSON.stringify(data).substring(0,300);
       el('e-er').style.display='';
@@ -654,8 +660,9 @@ function scanAI(b64, mime) {
     el('e-scan').className='scan-bar';
     el('e-ok').style.display='';
   }).catch(function(err){
+    clearTimeout(timer);
     el('e-scan').className='scan-bar';
-    el('e-er').textContent='Error: '+(err.message||err.toString());
+    el('e-er').textContent='Error: '+(err.name==='AbortError'?'Timeout - took too long':(err.message||err.toString()));
     el('e-er').style.display='';
   });
 }
